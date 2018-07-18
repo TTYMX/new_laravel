@@ -7,7 +7,7 @@ use DB;
 
 class UserModel extends Model
 {
-    protected $table = 'hl_users';
+    protected $table = 'lh_users';
     protected $primaryKey = 'id';
 
     public function __construct()

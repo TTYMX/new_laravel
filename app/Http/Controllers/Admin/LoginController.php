@@ -29,7 +29,7 @@ class LoginController extends Controller
     public function checkLogin(StoreAdminPost $request)
     {
         $fields = $request->only(['username', 'password']);
-        $userService = app(\App\Services\UserService::class);
+        $userService = app(\App\Services\User::class);
         $userInfo = $userService->select($fields['username']);
         if (!$userInfo) {
             return back()->with('error', '用户名或密码不正确');

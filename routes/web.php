@@ -17,7 +17,7 @@ Route::get('/', 'Home\IndexController@index');
 /**
  * 后台  统一中间件
  */
-Route::middleware(['AdminLogin'])->prefix('admin/')->group( function () {
+Route::middleware(['AdminLogin'])->prefix('admin/')->group(function () {
     //后台首页
     Route::get('index', 'Admin\IndexController@index');
     //退出后台登录
@@ -29,6 +29,17 @@ Route::middleware(['AdminLogin'])->prefix('admin/')->group( function () {
     Route::get('user/edit', 'Admin\UserController@edit');
     Route::post('user/update', 'Admin\UserController@update');
     Route::post('user/delete', 'Admin\UserController@delete');
+    //分类处理
+    Route::get('cate/add', 'Admin\CateController@add');
+    Route::get('cate/index', 'Admin\CateController@index');
+    Route::post('cate/insert', 'Admin\CateController@insert');
+    Route::post('cate/delete', 'Admin\CateController@delete');
+    //商品处理
+    Route::get('goods/add', 'Admin\GoodsController@add');
+    Route::get('goods/index', 'Admin\GoodsController@index');
+    Route::post('goods/insert', 'Admin\GoodsController@insert');
+    Route::post('goods/delete', 'Admin\GoodsController@delete');
+
 });
 
 Route::get('/admin/login', 'Admin\LoginController@index');

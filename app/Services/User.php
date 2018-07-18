@@ -8,7 +8,7 @@ use App\Models\UserModel as userModel;
  * Class User   用户信息的service
  * @package App\Services
  */
-class UserService
+class User
 {
     /**
      * User constructor.  构造器

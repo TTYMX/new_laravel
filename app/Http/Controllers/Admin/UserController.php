@@ -20,9 +20,9 @@ class UserController extends Controller
         $num = $request->input('num', 10);
         //判断是否有查询条件
         if ($request->input('keywords')) {
-            $users = DB::table('users')->where('username', 'like', '%' . $request->input('keywords') . '%')->paginate($num);
+            $users = DB::table('lh_users')->where('username', 'like', '%' . $request->input('keywords') . '%')->paginate($num);
         } else {
-            $users = DB::table('users')->paginate($num);
+            $users = DB::table('lh_users')->paginate($num);
         }
         $list = $request->all();
         return view('Admin.user.index', ['users' => $users, 'list' => $list]);
@@ -48,7 +48,7 @@ class UserController extends Controller
         $data['token'] = str_random(50);
         $data['password'] = Hash::make($data['password']);
         $data['pic'] = (string) $this->upload($request, 'pic');
-        $res = DB::table('users')->insert($data);
+        $res = DB::table('lh_users')->insert($data);
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户添加成功');
         } else {
@@ -64,7 +64,7 @@ class UserController extends Controller
     public function delete(Request $request)
     {
         $id = $request->input('id');
-        return DB::table('users')->delete($id);
+        return DB::table('lh_users')->delete($id);
     }
 
     /**
@@ -75,7 +75,7 @@ class UserController extends Controller
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $users = DB::table('users')->where('id', $id)->first();
+        $users = DB::table('lh_users')->where('id', $id)->first();
         return view('admin/user/edit', ['users' => $users]);
     }
 
@@ -93,7 +93,7 @@ class UserController extends Controller
             $data['pic'] = $this->upload($request, 'pic');
         }
         $id = $request->input('id');
-        $res = DB::table('users')->where('id', $id)->update($data);
+        $res = DB::table('lh_users')->where('id', $id)->update($data);
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户修改成功');
         } else {
