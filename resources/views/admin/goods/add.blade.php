@@ -1,98 +1,89 @@
 @extends('/admin/layout/layout')
-	@section('con')
-     <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">商品添加</h1>
-                </div>
-                <!-- /.col-lg-12 -->
+@section('con')
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">商品添加</h1>
             </div>
-            <!-- /.row -->
-            <div class="row">
-                
-            	<div class="panel panel-default">
-            	                        <div class="panel-heading">
-            	                            添加表单
-            	                        </div>
-            	                        <div class="panel-body">
-            	                            <div class="row">
-            	                                <div class="col-lg-5 col-lg-offset-3">
-            	                                	@if (count($errors) > 0)
-            	                                	    <div class="alert alert-danger">
-            	                                	        <ul>
-            	                                	            @foreach ($errors->all() as $error)
-            	                                	                <li>{{ $error }}</li>
-            	                                	            @endforeach
-            	                                	        </ul>
-            	                                	    </div>
-            	                                	@endif
-
-            	                                    <form role="form" action="{{url('/admin/goods/insert')}}" method="post" enctype="multipart/form-data">
-            	                                        
-                                                        <div class="form-group">
-                                                            <label>所属类别</label>
-                                                            <select class="form-control" name="cate_id">
-                                                                <option value="0">顶级分类</option>
-                                                                @foreach ( $cates as $k => $v )
-                                                                    <option value="{{$v->id}}">{{ $v->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label>商品名:</label>
-                                                            <input name="name" type="text" value="{{old('name')}}" class="form-control">
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label>图片:</label>
-                                                            <input type="file" multiple name="pic[]">
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label>商品价格:</label>
-                                                            <input name="price" type="text" value="{{old('price')}}" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>商品库存:</label>
-                                                            <input name="total" type="text" value="{{old('total')}}" class="form-control">
-                                                        </div>
-
-                                                        <script type="text/javascript" charset="utf-8" src="/baidubianjiqi/ueditor.config.js"></script>
-                                                           <script type="text/javascript" charset="utf-8" src="/baidubianjiqi/ueditor.all.min.js"> </script>
-                                                           <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
-                                                           <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
-                                                           <script type="text/javascript" charset="utf-8" src="/baidubianjiqi/lang/zh-cn/zh-cn.js"></script>
-
-                                                        <div class="form-group">
-            	                                            <label>商品详情:</label>
-            	                                            <script id="editor" name="content" type="text/plain" style="width:500px;height:200px;">
-                                                          
-                                                            </script>
-            	                                        </div>
-            	                                        
-            	                                        {{csrf_field()}}
-            	                                    
-            	                                        <button type="submit" class="btn btn-danger">提交</button>
-            	                                        <button type="reset" class="btn btn-warning">重置</button>
-            	                                    </form>
-            	                                </div>
-            	                               
-            	                            </div>
-            	                            <!-- /.row (nested) -->
-            	                        </div>
-            	                        <!-- /.panel-body -->
-            	                    </div>
-
-            </div>
-   
+            <!-- /.col-lg-12 -->
         </div>
-    @endsection
-    @section('js')
+        <!-- /.row -->
+        <div class="row">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    添加表单
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-5 col-lg-offset-3">
+                            @if (count($errors) > 0)
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <form role="form" action="{{url('/admin/goods/insert')}}" method="post"
+                                  enctype="multipart/form-data">
+
+                                <div class="form-group">
+                                    <label>所属类别</label>
+                                    <select class="form-control" name="cate_id">
+                                        <option value="0">顶级分类</option>
+                                        @foreach ( $cates as $k => $v )
+                                            <option value="{{$v->id}}">{{ $v->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>商品名:</label>
+                                    <input name="name" type="text" value="{{old('name')}}" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>图片:</label>
+                                    <input type="file" multiple name="pic[]">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>商品价格:</label>
+                                    <input name="price" type="text" value="{{old('price')}}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>商品库存:</label>
+                                    <input name="total" type="text" value="{{old('total')}}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>商品详情:</label>
+                                    <script id="editor" name="content" type="text/plain" > </script>
+                                </div>
+                                {{csrf_field()}}
+                                <button type="submit" class="btn btn-danger">提交</button>
+                                <button type="reset" class="btn btn-warning">重置</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+@section('js')
+    <script type="text/javascript" charset="utf-8" src="/baidubianjiqi/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/baidubianjiqi/ueditor.all.min.js"></script>
+    <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+    <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+    <script type="text/javascript" charset="utf-8" src="/baidubianjiqi/lang/zh-cn/zh-cn.js"></script>
     <script type="text/javascript">
         //实例化编辑器
-           //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
-           var ue = UE.getEditor('editor',{
+        //建议使用工厂方法getEditor创建和引用编辑器实例，
+        // 如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+        var ue = UE.getEditor('editor', {
             toolbars: [
                 [
                     'anchor', //锚点
@@ -188,8 +179,6 @@
                 ]
             ]
 
-           });
-
+        });
     </script>
-
-    @endsection
+@endsection

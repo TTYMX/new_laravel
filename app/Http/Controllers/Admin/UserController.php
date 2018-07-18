@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\UserInsertRequest;
+use App\Http\Controllers\Controller;
 use Hash;
 use DB;
-use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -48,6 +48,7 @@ class UserController extends Controller
         $data['token'] = str_random(50);
         $data['password'] = Hash::make($data['password']);
         $data['pic'] = (string) $this->upload($request, 'pic');
+        $data['created_time'] = time();
         $res = DB::table('lh_users')->insert($data);
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户添加成功');
@@ -87,6 +88,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $data = $request->only(['username', 'password', 'email', 'phone']);
+        $data['updated_at'] = time();
         //密码处理 加密
         $data['password'] = Hash::make($data['password']);
         if ($request->hasFile('pic')) {

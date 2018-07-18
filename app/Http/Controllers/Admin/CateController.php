@@ -16,13 +16,13 @@ class CateController extends Controller
     {
         $num = $request->input('num', 5);
         if ($request->input('keywords')) {
-            $cates = DB::table('lh_cate')
+            $cates = DB::table('lh_cates')
                 ->where('name', 'like', '%' . $request->input('keywords') . '%')
                 ->select(DB::raw("*,concat(path,',',id) as paths"))
                 ->orderBy('paths')
                 ->paginate($num);
         } else {
-            $cates = DB::table('lh_cate')
+            $cates = DB::table('lh_cates')
                 ->select(DB::raw("*,concat(path,',',id) as paths"))
                 ->orderBy('paths')
                 ->paginate($num);
@@ -55,18 +55,21 @@ class CateController extends Controller
     public function insert(Request $request)
     {
         $data = $request->only(['pid', 'name']);
+        if (!$data['name']) {
+            return back()->with('error', '分类添加失败,请填写分类名称');
+        }
         if ($data['pid'] == 0) {
             $data['path'] = 0;
         } else {
-            $res = DB::table('lh_cate')->where('id', $data['pid'])->first();
+            $res = DB::table('lh_cates')->where('id', $data['pid'])->first();
             $data['path'] = $res->path . ',' . $data['pid'];
         }
-        $res = DB::table('lh_cate')->insert($data);
+        $data['created_time'] = time();
+        $res = DB::table('lh_cates')->insert($data);
         if ($res) {
             return redirect('/admin/cate/index')->with('success', '分类添加成功');
-
         } else {
-            return back()->with('error', '用户添加失败');
+            return back()->with('error', '分类添加失败');
         }
     }
 
@@ -75,12 +78,11 @@ class CateController extends Controller
      */
     public static function cates()
     {
-        $cates = DB::select("select *,concat(path,',',id) as paths from lh_cate order by paths");
+        $cates = DB::select("select *,concat(path,',',id) as paths from lh_cates order by paths");
         foreach ($cates as $k => $v) {
             $arr = explode(',', $v->path);
             $len = count($arr) - 1;
             $cates[$k]->name = str_repeat('&nbsp;|--->', $len) . $v->name;
-
         }
         return $cates;
     }
@@ -92,10 +94,10 @@ class CateController extends Controller
      */
     public static function catesByPid($pid)
     {
-        $res = DB::table('lh_cate')->where('pid', $pid)->get();
+        $res = DB::table('lh_cates')->where('pid', $pid)->get();
         $data = [];
         foreach ($res as $k => $v) {
-            $v->sub = self::getCatesByPid($v->id);
+            $v->sub = self::catesByPid($v->id);
             $data[] = $v;
         }
         return $data;
@@ -109,34 +111,44 @@ class CateController extends Controller
     public function delete(Request $request)
     {
         $id = $request->input('id');
-        $res1 = DB::table('lh_cate')->where('pid', '=', $id)->first();
-        $res2 = DB::table('goods')->where('cate_id', '=', $id)->first();
-        if (!$res1 && !$res2) {
-            $res = DB::table('lh_cate')->where('id', '=', $id)->delete();
-            return $res;
-        } else {
-            return 0;
+        $resCate = DB::table('lh_cates')->where('pid', '=', $id)->first();
+        if ($resCate) {
+            $this->returnJson(10010,'存在子类,不允许删除');
         }
+        $resGoods = DB::table('lh_goods')->where('cate_id', '=', $id)->first();
+        if ($resGoods) {
+            $this->returnJson(10011,'存在商品,不允许删除');
+        }
+        $resDel = DB::table('lh_cates')->where('id', '=', $id)->delete();
+        $resDel ? $this->returnJson(0,'删除成功') : $this->returnJson(10010,'删除失败');
     }
 
+    /**
+     * 修改类别页面
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $cates = DB::table('lh_cate')->where('id', $id)->first();
-        // dd($cates);
-
-        //解析模板
+        $cates = DB::table('lh_cates')->where('id', $id)->first();
         return view('/admin/cate/edit', ['cates' => $cates]);
 
     }
 
+    /**
+     * 执行修改页面
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request)
     {
         $data = $request->only(['name']);
+        $data['updated_at'] = time();
         $id = $request->input('id');
-        $res = DB::table('lh_cate')->where('id', $id)->update($data);
+        $res = DB::table('lh_cates')->where('id', $id)->update($data);
         if ($res) {
-            return redirect('/admin/cate/index')->with('success', '用户修改成功');
+            return redirect('/admin/cate/index')->with('success', '分类修改成功');
         } else {
             return back()->with('error', '修改失败');
         }

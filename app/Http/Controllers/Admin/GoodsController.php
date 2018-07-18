@@ -18,23 +18,16 @@ class GoodsController extends Controller
         if ($request->input('keywords')) {
             $goods = DB::table('lh_goods')
                 ->where('lh_goods.name', 'like', '%' . $request->input('keywords') . '%')
-                ->select('lh_goods.*', 'lh_cate.name as names')
-                ->join('lh_cate', 'lh_cate.id', '=', 'lh_goods.cate_id')
+                ->select('lh_goods.*', 'lh_cates.name as names')
+                ->join('lh_cates', 'lh_cates.id', '=', 'lh_goods.cate_id')
                 ->paginate($num);
         } else {
             $goods = DB::table('lh_goods')
-                ->select('lh_goods.*', 'lh_cate.name as names')
-                ->join('lh_cate', 'lh_cate.id', '=', 'lh_goods.cate_id')
+                ->select('lh_goods.*', 'lh_cates.name as names')
+                ->join('lh_cates', 'lh_cates.id', '=', 'lh_goods.cate_id')
                 ->paginate($num);
         }
         $list = $request->all();
-        foreach ($goods as $k => $v) {
-            if ($v->status == 1) {
-                $goods[$k]->status = '上架';
-            } elseif ($v->status == 2) {
-                $goods[$k]->status = '下架';
-            }
-        }
         foreach ($goods as $k => $v) {
             $pic = DB::table('lh_pics')->where('goods_id', $v->id)->first();
             if ($pic) {
@@ -42,7 +35,6 @@ class GoodsController extends Controller
             } else {
                 $goods[$k]->pic = '';
             }
-
         }
         return view('admin/goods/index', ['goods' => $goods, 'list' => $list]);
     }
@@ -64,7 +56,22 @@ class GoodsController extends Controller
      */
     public function insert(Request $request)
     {
-        $data = $request->only(['name', 'cate_id', 'price', 'total', 'content']);
+        $data['name'] = (string) $request->input('name');
+        $data['cate_id'] = (int) $request->input('cate_id');
+        $data['price'] = (float) $request->input('price');
+        $data['total'] = (int) $request->input('total');
+        $data['content'] = (string) $request->input('content');
+        if (!$data['cate_id']) {
+            return back()->with('error', '顶级菜单不允许出现商品');
+        }
+        if (!$data['name']) {
+            return back()->with('error', '请填写商品的名称');
+        }
+        if (!$request->only('pic')) {
+            return back()->with('error', '请选择商品图片');
+        }
+        $data['created_time'] = time();
+        DB::beginTransaction();
         $insertId = DB::table('lh_goods')->insertGetId($data);
         $pic = $request->only('pic')['pic'];
         foreach ($pic as $k => $v) {
@@ -76,12 +83,12 @@ class GoodsController extends Controller
         }
         $res = DB::table('lh_pics')->insert($pics);
         if ($insertId && $res) {
+            DB::commit();
             return redirect('/admin/goods/index')->with('success', '商品添加成功');
         } else {
+            DB::rollBack();
             return back()->with('error', '商品添加失败');
         }
-
-
     }
 
     /**
@@ -117,7 +124,7 @@ class GoodsController extends Controller
      */
     public function edit(Request $request)
     {
-        $cates = CateController::getCates();
+        $cates = CateController::cates();
         $id = $request->input('id');
         $goods = DB::table('lh_goods')->where('id', $id)->first();
         return view('/admin/goods/edit', ['lh_goods' => $goods, 'cates' => $cates]);
@@ -130,11 +137,12 @@ class GoodsController extends Controller
      */
     public function update(Request $request)
     {
+        $id = $request->input('id');
         $data = $request->only(['name', 'price', 'total', 'cate_id', 'status']);
+        $data['updated_at'] = time();
         if ($request->hasFile('pic')) {
             $data['pic'] = UserController::upload($request, 'pic');
         }
-        $id = $request->input('id');
         $res = DB::table('lh_goods')->where('id', $id)->update($data);
         if ($res) {
             return redirect('/admin/goods/index')->with('success', '商品修改成功');
@@ -148,16 +156,18 @@ class GoodsController extends Controller
      * @param Request $request
      * @return string
      */
-    public function updatestatus(Request $request)
+    public function updateStatus(Request $request)
     {
-        $id = $request->input('id');
-        $status = DB::table('lh_goods')->where('id', '=', $id)->value('status');
-        if ($status == 1) {
-            DB::table('lh_goods')->where('id', $id)->update(['status' => '2']);
-            return '下架';
-        } elseif ($status == 2) {
-            DB::table('lh_goods')->where('id', $id)->update(['status' => '1']);
-            return '上架';
+        $id = (int)$request->input('id');
+        $status = (int)$request->input('status');
+        if ($status == 2) {
+            $status = 1;
+            $msg = '上架';
+        } else {
+            $status = 2;
+            $msg = '下架';
         }
+        $res = DB::table('lh_goods')->where('id', $id)->update(['status' => $status]);
+        $res ? $this->returnJson(0,$msg) : $this->returnJson(10010,$msg);
     }
 }

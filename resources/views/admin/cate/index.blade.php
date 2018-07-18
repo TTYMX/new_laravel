@@ -5,14 +5,11 @@
             <div class="col-lg-12">
                 <h1 class="page-header">分类列表</h1>
             </div>
-            <!-- /.col-lg-12 -->
         </div>
-        <!-- /.row -->
         <div class="panel panel-default">
             <div class="panel-heading">
                 分类显示
             </div>
-            <!-- /.panel-heading -->
             <div class="panel-body">
                 <div class="dataTable_wrapper">
                     <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
@@ -70,23 +67,23 @@
                                        id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
                                     <thead>
                                     <tr role="row">
-                                        <th class="sorting_asc" tabindex="0" aria-controls="dataTables-example"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example"
                                             rowspan="1" colspan="1" style="width: 175px;" aria-sort="ascending"
                                             aria-label="Rendering engine: activate to sort column descending">分类ID
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 203px;"
                                             aria-label="Browser: activate to sort column ascending">名称
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 184px;"
                                             aria-label="Platform(s): activate to sort column ascending">所属分类PID
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 150px;"
                                             aria-label="Engine version: activate to sort column ascending">path路径
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 108px;"
                                             aria-label="CSS grade: activate to sort column ascending">操作
                                         </th>
@@ -95,14 +92,15 @@
                                     <tbody>
                                     @foreach( $cates as $k=>$v )
                                         <tr class="gradeA odd" role="row">
-                                            <td class="sorting_1">{{$v->id}}</td>
+                                            <td class="">{{$v->id}}</td>
                                             <td>{{$v->name}}</td>
                                             <td class="center">{{$v->pid}}</td>
                                             <td class="center">{{$v->path}}</td>
                                             <td class="center">
-                                                <button type="button" class="btn btn-danger btn-sm delete-btn">删除
+                                                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                        del="{{$v->id}}">删除
                                                 </button>
-                                                <a href="{{url('/admin/user/edit?id='.$v->id)}}"
+                                                <a href="{{url('/admin/cate/edit?id='.$v->id)}}"
                                                    class="btn btn btn-success btn-sm">修改</a>
                                             </td>
                                         </tr>
@@ -118,6 +116,16 @@
         </div>
     </div>
 @endsection
+<!-- Small modal -->
+
+
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            ...
+        </div>
+    </div>
+</div>
 
 @section('js')
     <script type="text/javascript">
@@ -126,16 +134,22 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
         $('.delete-btn').click(function () {
-            var id = $(this).parents('tr').find('.sorting_1').html();
+            var id = $(this).attr('del');
             var btn = $(this);
-            $.post('/admin/cate/delete', {id: id}, function (data) {
-                if (data == 1) {
-                    btn.parents('tr').remove();
-                } else {
-                    alert('分类下有子类,删除失败');
-                }
+            $.ajax({
+                type: 'POST',
+                url: '/admin/cate/delete',
+                data: {'id': id},
+                success: function (data) {
+                    if (!data.errcode) {
+                        btn.parents('tr').remove();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                dataType: 'json',
+
             });
         })
     </script>

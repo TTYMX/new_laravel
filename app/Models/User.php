@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class UserModel extends Model
+class User extends Model
 {
     protected $table = 'lh_users';
     protected $primaryKey = 'id';
@@ -17,11 +17,11 @@ class UserModel extends Model
 
     public function select($name)
     {
-        return DB::table('users')->where('username',$name)->first();
+        return DB::table($this->table)->where('username',$name)->first();
     }
 
     public function find($id)
     {
-        return DB::table('users')->where('id',$id)->first();
+        return DB::table($this->table)->where('id',$id)->first();
     }
 }

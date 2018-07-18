@@ -70,35 +70,35 @@
                                        id="dataTables-example" role="grid" aria-describedby="dataTables-example_info">
                                     <thead>
                                     <tr role="row">
-                                        <th class="sorting_asc" tabindex="0" aria-controls="dataTables-example"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example"
                                             rowspan="1" colspan="1" style="width: 175px;" aria-sort="ascending"
                                             aria-label="Rendering engine: activate to sort column descending">商品ID
                                         </th>
-                                        <th class="sorting_asc" tabindex="0" aria-controls="dataTables-example"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example"
                                             rowspan="1" colspan="1" style="width: 175px;" aria-sort="ascending"
                                             aria-label="Rendering engine: activate to sort column descending">商品名
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 203px;"
                                             aria-label="Browser: activate to sort column ascending">商品图片
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 203px;"
                                             aria-label="Browser: activate to sort column ascending">所属类
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 184px;"
                                             aria-label="Platform(s): activate to sort column ascending">价格
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 150px;"
                                             aria-label="Engine version: activate to sort column ascending">库存
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 150px;"
                                             aria-label="Engine version: activate to sort column ascending">状态
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1"
+                                        <th class="" tabindex="0" aria-controls="dataTables-example" rowspan="1"
                                             colspan="1" style="width: 108px;"
                                             aria-label="CSS grade: activate to sort column ascending">操作
                                         </th>
@@ -107,18 +107,21 @@
                                     <tbody>
                                     @foreach($goods as $k=>$v)
                                         <tr class="gradeA odd" role="row">
-                                            <td class="sorting_1">{{$v->id}}</td>
-                                            <td class="sorting_1">{{$v->name}}</td>
+                                            <td class="">{{$v->id}}</td>
+                                            <td class="">{{$v->name}}</td>
                                             <td><img src="{{$v->pic}}" width="50px" height="70px"></td>
                                             <td>{{$v->names}}</td>
                                             <td>{{$v->price}}</td>
                                             <td class="center">{{$v->total}}</td>
                                             <td class="center">
-                                                <button type="button"
-                                                        class="btn btn-primary btn-xs update-btn">{{$v->status}}</button>
+                                                <button type="button" stid="{{$v->id}}" status="{{$v->status}}"
+                                                        class="btn btn-primary btn-xs update-btn">
+                                                    {{$v->status == 1 ? '上架' : '下架'}}
+                                                </button>
                                             </td>
                                             <td class="center" width="150px">
-                                                <button type="button" class="btn btn-danger btn-sm delete-btn">删除
+                                                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                        del="{{$v->id}}">删除
                                                 </button>
                                                 <a href="/admin/goods/edit?id={{$v->id}}"
                                                    class="btn btn btn-success btn-sm">修改</a>
@@ -139,22 +142,15 @@
 
 @section('js')
     <script type="text/javascript">
-        // alert($);
-        // 绑定单机事件
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
         $('.delete-btn').click(function () {
-            var id = $(this).parents('tr').find('.sorting_1').html();
-            // alert(id);
-            // 发送ajax
+            var id = $(this).attr('del');
             var btn = $(this);
             $.post('/admin/goods/delete', {id: id}, function (data) {
-                // alert(data);
-                // console.log(data);
                 if (data == 1) {
                     alert('删除成功');
                     btn.parents('tr').remove();
@@ -166,16 +162,15 @@
         })
         //上架下架操作
         $('.update-btn').click(function () {
-            // alert(111);
             var btn = $(this);
-            var id = $(this).parents('tr').find('.sorting_1').html();
-            // alert(id);
-            // 发送ajax
-            $.post('/admin/goods/updatestatus', {id: id}, function (data) {
-
-                btn.text(data);
-                // alert(data);
-            });
+            var id = $(this).attr('stid');
+            var status = $(this).attr('status');
+            status == 2 ? $(this).attr('status',1) : $(this).attr('status',2);
+            $.post('/admin/goods/updateStatus', {'id': id,'status':status}, function (data) {
+                if (!data.errcode) {
+                    btn.text(data.msg);
+                }
+            }, 'json');
         })
 
     </script>

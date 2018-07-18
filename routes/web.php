@@ -32,15 +32,24 @@ Route::middleware(['AdminLogin'])->prefix('admin/')->group(function () {
     //分类处理
     Route::get('cate/add', 'Admin\CateController@add');
     Route::get('cate/index', 'Admin\CateController@index');
+    Route::get('cate/edit', 'Admin\CateController@edit');
+    Route::post('cate/update', 'Admin\CateController@update');
     Route::post('cate/insert', 'Admin\CateController@insert');
     Route::post('cate/delete', 'Admin\CateController@delete');
     //商品处理
     Route::get('goods/add', 'Admin\GoodsController@add');
     Route::get('goods/index', 'Admin\GoodsController@index');
+    Route::get('goods/edit', 'Admin\GoodsController@edit');
+    Route::post('goods/update', 'Admin\GoodsController@update');
     Route::post('goods/insert', 'Admin\GoodsController@insert');
     Route::post('goods/delete', 'Admin\GoodsController@delete');
+    Route::post('goods/updateStatus', 'Admin\GoodsController@updateStatus');
 
 });
 
 Route::get('/admin/login', 'Admin\LoginController@index');
 Route::post('/login/adminCheck', 'Admin\LoginController@checkLogin');
+
+
+Route::get('/admin/test', 'Admin\TestController@test');
+Route::get('/admin/export', 'Admin\TestController@export');

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\UserModel as userModel;
+use App\Models\User as userModel;
 
 /**
  * Class User   用户信息的service
