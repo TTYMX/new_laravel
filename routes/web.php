@@ -10,10 +10,15 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+//首页
 Route::get('/', 'Home\IndexController@index');
+Route::get('/home/index/detail','Home\IndexController@detail');
+Route::get('/home/login/login','Home\LoginController@login');
 
-
+Route::middleware(['HomeLogin'])->prefix('home/')->group(function () {
+    Route::get('card/card', 'Home\CardController@card');
+    Route::get('card/buy', 'Home\CardController@buy');
+});
 /**
  * 后台  统一中间件
  */
@@ -46,10 +51,10 @@ Route::middleware(['AdminLogin'])->prefix('admin/')->group(function () {
     Route::post('goods/updateStatus', 'Admin\GoodsController@updateStatus');
 
 });
-
+//后台的登录
 Route::get('/admin/login', 'Admin\LoginController@index');
 Route::post('/login/adminCheck', 'Admin\LoginController@checkLogin');
 
-
+//excel测试
 Route::get('/admin/test', 'Admin\TestController@test');
 Route::get('/admin/export', 'Admin\TestController@export');

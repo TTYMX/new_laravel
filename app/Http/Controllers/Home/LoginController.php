@@ -42,7 +42,7 @@ class LoginController extends Controller
 
     public function login()
     {
-        echo 'login';
+        return view('home/login/login');
     }
 
 

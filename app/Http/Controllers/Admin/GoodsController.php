@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
 use DB;
 
@@ -29,7 +30,7 @@ class GoodsController extends Controller
         }
         $list = $request->all();
         foreach ($goods as $k => $v) {
-            $pic = DB::table('lh_pics')->where('goods_id', $v->id)->first();
+            $pic = DB::table('lh_pics')->where('good_id', $v->id)->first();
             if ($pic) {
                 $goods[$k]->pic = $pic->path;
             } else {
@@ -56,11 +57,11 @@ class GoodsController extends Controller
      */
     public function insert(Request $request)
     {
-        $data['name'] = (string) $request->input('name');
-        $data['cate_id'] = (int) $request->input('cate_id');
-        $data['price'] = (float) $request->input('price');
-        $data['total'] = (int) $request->input('total');
-        $data['content'] = (string) $request->input('content');
+        $data['name'] = (string)$request->input('name');
+        $data['cate_id'] = (int)$request->input('cate_id');
+        $data['price'] = (float)$request->input('price');
+        $data['total'] = (int)$request->input('total');
+        $data['content'] = (string)$request->input('content');
         if (!$data['cate_id']) {
             return back()->with('error', '顶级菜单不允许出现商品');
         }
@@ -77,9 +78,9 @@ class GoodsController extends Controller
         foreach ($pic as $k => $v) {
             $suffix = $v->getClientOriginalExtension();
             $name = md5(time() . rand(1, 9999));
-            $v->move('./uploads/', $name . '.' . $suffix);
-            $pics[]['path'] = '/uploads/' . $name . '.' . $suffix;
-            $pics[$k]['goods_id'] = $insertId;
+            $v->move('./uploads/shangpin', $name . '.' . $suffix);
+            $pics[]['path'] = '/uploads/shangpin' . $name . '.' . $suffix;
+            $pics[$k]['good_id'] = $insertId;
         }
         $res = DB::table('lh_pics')->insert($pics);
         if ($insertId && $res) {
@@ -111,7 +112,7 @@ class GoodsController extends Controller
     {
         $id = $request->input('id');
         $res = DB::table('lh_goods')->where('id', '=', $id)->delete();
-        $ress = DB::table('lh_pics')->where('goods_id', '=', $id)->delete();
+        $ress = DB::table('lh_pics')->where('good_id', '=', $id)->delete();
         if ($res && $ress) {
             return true;
         }
@@ -127,7 +128,8 @@ class GoodsController extends Controller
         $cates = CateController::cates();
         $id = $request->input('id');
         $goods = DB::table('lh_goods')->where('id', $id)->first();
-        return view('/admin/goods/edit', ['lh_goods' => $goods, 'cates' => $cates]);
+        $pics = DB::table('lh_pics')->where('good_id', $id)->first();
+        return view('/admin/goods/edit', ['goods' => $goods, 'cates' => $cates, 'pics' => $pics]);
     }
 
     /**
@@ -140,11 +142,18 @@ class GoodsController extends Controller
         $id = $request->input('id');
         $data = $request->only(['name', 'price', 'total', 'cate_id', 'status']);
         $data['updated_at'] = time();
+        $res_pic = true;
         if ($request->hasFile('pic')) {
-            $data['pic'] = UserController::upload($request, 'pic');
+            $pic = $request->only('pic')['pic'];
+            $suffix = $pic->getClientOriginalExtension();
+            $name = md5(time() . rand(1, 9999));
+            $pic->move('./uploads/shangpin/', $name . '.' . $suffix);
+            $pics['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
+            $pics['good_id'] = $id;
+            $res_pic = DB::table('lh_pics')->insert($pics);
         }
         $res = DB::table('lh_goods')->where('id', $id)->update($data);
-        if ($res) {
+        if ($res && $res_pic) {
             return redirect('/admin/goods/index')->with('success', '商品修改成功');
         } else {
             return back()->with('error', '商品修改失败');
@@ -168,6 +177,6 @@ class GoodsController extends Controller
             $msg = '下架';
         }
         $res = DB::table('lh_goods')->where('id', $id)->update(['status' => $status]);
-        $res ? $this->returnJson(0,$msg) : $this->returnJson(10010,$msg);
+        $res ? $this->returnJson(0, $msg) : $this->returnJson(10010, $msg);
     }
 }

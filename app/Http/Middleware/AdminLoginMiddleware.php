@@ -14,7 +14,7 @@ class AdminLoginMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (5) {
+        if (session('uid')) {
             return $next($request);
         } else {
             return redirect('/admin/login')->with('error', '您还没登录');

@@ -3,7 +3,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">用户修改</h1>
+                <h1 class="page-header">商品修改</h1>
             </div>
         </div>
         <div class="row">
@@ -58,7 +58,7 @@
                                 <div class="form-group">
                                     <label>商品图片:</label>
                                     <input type="file" name="pic">
-                                    <img src="{{$goods->pic}}" width="100px">
+                                    <img src="{{$pics->path}}" width="100px">
                                 </div>
                                 {{csrf_field()}}
                                 <button type="submit" class="btn btn-danger">提交修改</button>
