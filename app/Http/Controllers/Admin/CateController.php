@@ -5,7 +5,6 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cate;
-use DB;
 
 class CateController extends Controller
 {
@@ -17,14 +16,12 @@ class CateController extends Controller
     {
         $num = $request->input('num', 5);
         if ($request->input('keywords')) {
-            $cates = DB::table('lh_cates')
+            $cates = Cate::selectRaw("*,concat(path,',',id) as paths")
                 ->where('name', 'like', '%' . $request->input('keywords') . '%')
-                ->select(DB::raw("*,concat(path,',',id) as paths"))
                 ->orderBy('paths')
                 ->paginate($num);
         } else {
-            $cates = DB::table('lh_cates')
-                ->select(DB::raw("*,concat(path,',',id) as paths"))
+            $cates = Cate::selectRaw("*,concat(path,',',id) as paths")
                 ->orderBy('paths')
                 ->paginate($num);
         }
@@ -62,11 +59,11 @@ class CateController extends Controller
         if ($data['pid'] == 0) {
             $data['path'] = 0;
         } else {
-            $res = DB::table('lh_cates')->where('id', $data['pid'])->first();
+            $res = Cate::select()->where('id', $data['pid'])->first();
             $data['path'] = $res->path . ',' . $data['pid'];
         }
-        $data['created_time'] = time();
-        $res = DB::table('lh_cates')->insert($data);
+        $data['created_at'] = time();
+        $res = Cate::select()->insert($data);
         if ($res) {
             return redirect('/admin/cate/index')->with('success', '分类添加成功');
         } else {
@@ -79,7 +76,7 @@ class CateController extends Controller
      */
     public static function cates()
     {
-        $cates = DB::select("select *,concat(path,',',id) as paths from lh_cates order by paths");
+        $cates = Cate::selectRaw("*,concat(path,',',id) as paths")->orderBy('paths')->get();
         foreach ($cates as $k => $v) {
             $arr = explode(',', $v->path);
             $len = count($arr) - 1;
@@ -95,7 +92,7 @@ class CateController extends Controller
      */
     public static function catesByPid($pid)
     {
-        $res = DB::table('lh_cates')->where('pid', $pid)->get();
+        $res = Cate::select()->where('pid', $pid)->get();
         $data = [];
         foreach ($res as $k => $v) {
             $v->sub = self::catesByPid($v->id);
@@ -112,7 +109,7 @@ class CateController extends Controller
     public function delete(Request $request)
     {
         $id = $request->input('id');
-        $resCate = DB::table('lh_cates')->where('pid', '=', $id)->first();
+        $resCate = Cate::select()->where('pid', '=', $id)->first();
         if ($resCate) {
             $this->returnJson(10010,'存在子类,不允许删除');
         }
@@ -120,7 +117,7 @@ class CateController extends Controller
         if ($resGoods) {
             $this->returnJson(10011,'存在商品,不允许删除');
         }
-        $resDel = DB::table('lh_cates')->where('id', '=', $id)->delete();
+        $resDel = Cate::select()->where('id', '=', $id)->delete();
         $resDel ? $this->returnJson(0,'删除成功') : $this->returnJson(10010,'删除失败');
     }
 
@@ -132,7 +129,7 @@ class CateController extends Controller
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $cates = DB::table('lh_cates')->where('id', $id)->first();
+        $cates = Cate::select()->where('id', $id)->first();
         return view('/admin/cate/edit', ['cates' => $cates]);
 
     }
@@ -147,7 +144,7 @@ class CateController extends Controller
         $data = $request->only(['name']);
         $data['updated_at'] = time();
         $id = $request->input('id');
-        $res = DB::table('lh_cates')->where('id', $id)->update($data);
+        $res = Cate::select()->where('id', $id)->update($data);
         if ($res) {
             return redirect('/admin/cate/index')->with('success', '分类修改成功');
         } else {

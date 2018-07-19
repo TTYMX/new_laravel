@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAdminPost;
+use App\Models\User;
 use Hash;
 
 class LoginController extends Controller
@@ -29,8 +30,7 @@ class LoginController extends Controller
     public function checkLogin(StoreAdminPost $request)
     {
         $fields = $request->only(['username', 'password']);
-        $userService = app(\App\Services\User::class);
-        $userInfo = $userService->select($fields['username']);
+        $userInfo = User::select()->where('username',$fields['username'])->first();
         if (!$userInfo) {
             return back()->with('error', '用户名或密码不正确');
         }

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserInsertRequest;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Hash;
-use DB;
 
 class UserController extends Controller
 {
@@ -20,9 +20,10 @@ class UserController extends Controller
         $num = $request->input('num', 10);
         //判断是否有查询条件
         if ($request->input('keywords')) {
-            $users = DB::table('lh_users')->where('username', 'like', '%' . $request->input('keywords') . '%')->paginate($num);
+            $keywords = $request->input('keywords');
+            $users = User::select()->where('username','like', '%' . $keywords . '%')->paginate($num);
         } else {
-            $users = DB::table('lh_users')->paginate($num);
+            $users = User::select()->paginate($num);
         }
         $list = $request->all();
         return view('Admin.user.index', ['users' => $users, 'list' => $list]);
@@ -47,9 +48,9 @@ class UserController extends Controller
         $data = $request->only('username', 'password', 'email', 'phone', 'auth', 'sex');
         $data['token'] = str_random(50);
         $data['password'] = Hash::make($data['password']);
-        $data['pic'] = (string) $this->upload($request, 'pic');
-        $data['created_time'] = time();
-        $res = DB::table('lh_users')->insert($data);
+        $data['pic'] = (string)$this->upload($request, 'pic');
+        $data['created_at'] = time();
+        $res = User::insert($data);
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户添加成功');
         } else {
@@ -65,7 +66,7 @@ class UserController extends Controller
     public function delete(Request $request)
     {
         $id = $request->input('id');
-        return DB::table('lh_users')->delete($id);
+        return User::where('id',$id)->delete();
     }
 
     /**
@@ -76,7 +77,7 @@ class UserController extends Controller
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $users = DB::table('lh_users')->where('id', $id)->first();
+        $users = User::select()->where('id', $id)->first();
         return view('admin/user/edit', ['users' => $users]);
     }
 
@@ -95,7 +96,7 @@ class UserController extends Controller
             $data['pic'] = $this->upload($request, 'pic');
         }
         $id = $request->input('id');
-        $res = DB::table('lh_users')->where('id', $id)->update($data);
+        $res = User::select()->where('id', $id)->update($data);
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户修改成功');
         } else {

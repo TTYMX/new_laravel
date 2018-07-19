@@ -109,7 +109,7 @@
                                         <tr class="gradeA odd" role="row">
                                             <td class="">{{$v->id}}</td>
                                             <td class="">{{$v->name}}</td>
-                                            <td><img src="{{$v->pic}}" width="50px" height="70px"></td>
+                                            <td><img src="{{$v->path}}" width="50px" height="70px"></td>
                                             <td>{{$v->names}}</td>
                                             <td>{{$v->price}}</td>
                                             <td class="center">{{$v->total}}</td>
@@ -151,8 +151,7 @@
             var id = $(this).attr('del');
             var btn = $(this);
             $.post('/admin/goods/delete', {id: id}, function (data) {
-                if (data == 1) {
-                    alert('删除成功');
+                if (!data.errcode) {
                     btn.parents('tr').remove();
                 } else {
                     //删除失败

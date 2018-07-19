@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class User extends Model
+class Good extends Model
 {
-    protected $table = 'lh_users';
+    protected $dateFormat = 'U';
+    protected $table = 'lh_goods';
     protected $primaryKey = 'id';
 }

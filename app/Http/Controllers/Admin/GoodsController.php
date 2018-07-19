@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
-use DB;
+use App\Models\Good;
+use App\Models\Pic;
+use Illuminate\Support\Facades\DB;
 
 class GoodsController extends Controller
 {
@@ -17,26 +18,18 @@ class GoodsController extends Controller
     {
         $num = $request->input('num', 5);
         if ($request->input('keywords')) {
-            $goods = DB::table('lh_goods')
+            $goods = Good::selectRaw('lh_goods.*,lh_cates.name as names,lh_pics.path')
                 ->where('lh_goods.name', 'like', '%' . $request->input('keywords') . '%')
-                ->select('lh_goods.*', 'lh_cates.name as names')
-                ->join('lh_cates', 'lh_cates.id', '=', 'lh_goods.cate_id')
+                ->leftJoin('lh_cates', 'lh_cates.id', '=', 'lh_goods.cate_id')
+                ->leftJoin('lh_pics', 'lh_pics.good_id', '=', 'lh_goods.id')
                 ->paginate($num);
         } else {
-            $goods = DB::table('lh_goods')
-                ->select('lh_goods.*', 'lh_cates.name as names')
-                ->join('lh_cates', 'lh_cates.id', '=', 'lh_goods.cate_id')
+            $goods = Good::selectRaw('lh_goods.*,lh_cates.name as names,lh_pics.path')
+                ->leftJoin('lh_cates', 'lh_cates.id', '=', 'lh_goods.cate_id')
+                ->leftJoin('lh_pics', 'lh_pics.good_id', '=', 'lh_goods.id')
                 ->paginate($num);
         }
         $list = $request->all();
-        foreach ($goods as $k => $v) {
-            $pic = DB::table('lh_pics')->where('good_id', $v->id)->first();
-            if ($pic) {
-                $goods[$k]->pic = $pic->path;
-            } else {
-                $goods[$k]->pic = '';
-            }
-        }
         return view('admin/goods/index', ['goods' => $goods, 'list' => $list]);
     }
 
@@ -71,18 +64,18 @@ class GoodsController extends Controller
         if (!$request->only('pic')) {
             return back()->with('error', '请选择商品图片');
         }
-        $data['created_time'] = time();
+        $data['created_at'] = time();
         DB::beginTransaction();
-        $insertId = DB::table('lh_goods')->insertGetId($data);
+        $insertId = Good::select()->insertGetId($data);
         $pic = $request->only('pic')['pic'];
         foreach ($pic as $k => $v) {
             $suffix = $v->getClientOriginalExtension();
             $name = md5(time() . rand(1, 9999));
-            $v->move('./uploads/shangpin', $name . '.' . $suffix);
-            $pics[]['path'] = '/uploads/shangpin' . $name . '.' . $suffix;
+            $v->move('./uploads/shangpin/', $name . '.' . $suffix);
+            $pics[]['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
             $pics[$k]['good_id'] = $insertId;
         }
-        $res = DB::table('lh_pics')->insert($pics);
+        $res = Pic::select()->insert($pics);
         if ($insertId && $res) {
             DB::commit();
             return redirect('/admin/goods/index')->with('success', '商品添加成功');
@@ -111,10 +104,12 @@ class GoodsController extends Controller
     public function delete(Request $request)
     {
         $id = $request->input('id');
-        $res = DB::table('lh_goods')->where('id', '=', $id)->delete();
-        $ress = DB::table('lh_pics')->where('good_id', '=', $id)->delete();
-        if ($res && $ress) {
-            return true;
+        $resGood = Good::where('id', '=', $id)->delete();
+        $resPic = Pic::where('good_id', '=', $id)->delete();
+        if ($resGood && $resPic) {
+            $this->returnJson(0, '删除成功');
+        } else {
+            $this->returnJson(10010, '删除失败');
         }
     }
 
@@ -127,8 +122,8 @@ class GoodsController extends Controller
     {
         $cates = CateController::cates();
         $id = $request->input('id');
-        $goods = DB::table('lh_goods')->where('id', $id)->first();
-        $pics = DB::table('lh_pics')->where('good_id', $id)->first();
+        $goods = Good::select()->where('id', $id)->first();
+        $pics = Pic::select()->where('good_id', $id)->first();
         return view('/admin/goods/edit', ['goods' => $goods, 'cates' => $cates, 'pics' => $pics]);
     }
 
@@ -150,9 +145,9 @@ class GoodsController extends Controller
             $pic->move('./uploads/shangpin/', $name . '.' . $suffix);
             $pics['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
             $pics['good_id'] = $id;
-            $res_pic = DB::table('lh_pics')->insert($pics);
+            $res_pic = Pic::select()->where('good_id', $id)->update($pics);
         }
-        $res = DB::table('lh_goods')->where('id', $id)->update($data);
+        $res = Good::select()->where('id', $id)->update($data);
         if ($res && $res_pic) {
             return redirect('/admin/goods/index')->with('success', '商品修改成功');
         } else {
@@ -176,7 +171,7 @@ class GoodsController extends Controller
             $status = 2;
             $msg = '下架';
         }
-        $res = DB::table('lh_goods')->where('id', $id)->update(['status' => $status]);
+        $res = Good::where('id', $id)->update(['status' => $status]);
         $res ? $this->returnJson(0, $msg) : $this->returnJson(10010, $msg);
     }
 }
