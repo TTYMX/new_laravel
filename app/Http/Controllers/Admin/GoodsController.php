@@ -5,7 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Good;
-use App\Models\Pic;
+use App\Models\Picture;
 use Illuminate\Support\Facades\DB;
 
 class GoodsController extends Controller
@@ -50,33 +50,38 @@ class GoodsController extends Controller
      */
     public function insert(Request $request)
     {
-        $data['name'] = (string)$request->input('name');
-        $data['cate_id'] = (int)$request->input('cate_id');
-        $data['price'] = (float)$request->input('price');
-        $data['total'] = (int)$request->input('total');
-        $data['content'] = (string)$request->input('content');
-        if (!$data['cate_id']) {
+        $good = new Good;
+        $data['name'] = $good->name = (string)$request->input('name');
+        $data['cate_id'] = $good->cate_id = (string)$request->input('cate_id');
+        $good->price = (int)$request->input('price');
+        $good->total = (float)$request->input('total');
+        $good->content = (string)$request->input('content');
+        if (!$good->cate_id) {
             return back()->with('error', '顶级菜单不允许出现商品');
         }
-        if (!$data['name']) {
+        if (!$good->name) {
             return back()->with('error', '请填写商品的名称');
         }
-        if (!$request->only('pic')) {
+        if (!$request->hasFile('pic')) {
             return back()->with('error', '请选择商品图片');
         }
-        $data['created_at'] = time();
         DB::beginTransaction();
-        $insertId = Good::select()->insertGetId($data);
-        $pic = $request->only('pic')['pic'];
-        foreach ($pic as $k => $v) {
-            $suffix = $v->getClientOriginalExtension();
+        $res = false;
+        $resGood = $good->save();
+        if ($request->hasFile('pic') && $good->id) {
+            $pic = $request->file('pic');
+            $pic = $pic[0];
+            $suffix = $pic->getClientOriginalExtension();
             $name = md5(time() . rand(1, 9999));
-            $v->move('./uploads/shangpin/', $name . '.' . $suffix);
-            $pics[]['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
-            $pics[$k]['good_id'] = $insertId;
+            $pic->move('./uploads/shangpin/', $name . '.' . $suffix);
+            $pics['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
+            $pics['good_id'] = $good->id;
+            $new_pic = new Picture;
+            $new_pic->path = $pics['path'];
+            $new_pic->good_id = $pics['good_id'];
+            $res = $new_pic->save();
         }
-        $res = Pic::select()->insert($pics);
-        if ($insertId && $res) {
+        if ($resGood && $res) {
             DB::commit();
             return redirect('/admin/goods/index')->with('success', '商品添加成功');
         } else {
@@ -105,7 +110,7 @@ class GoodsController extends Controller
     {
         $id = $request->input('id');
         $resGood = Good::where('id', '=', $id)->delete();
-        $resPic = Pic::where('good_id', '=', $id)->delete();
+        $resPic = Picture::where('good_id', '=', $id)->delete();
         if ($resGood && $resPic) {
             $this->returnJson(0, '删除成功');
         } else {
@@ -123,7 +128,7 @@ class GoodsController extends Controller
         $cates = CateController::cates();
         $id = $request->input('id');
         $goods = Good::select()->where('id', $id)->first();
-        $pics = Pic::select()->where('good_id', $id)->first();
+        $pics = Picture::select()->where('good_id', $id)->first();
         return view('/admin/goods/edit', ['goods' => $goods, 'cates' => $cates, 'pics' => $pics]);
     }
 
@@ -136,7 +141,6 @@ class GoodsController extends Controller
     {
         $id = $request->input('id');
         $data = $request->only(['name', 'price', 'total', 'cate_id', 'status']);
-        $data['updated_at'] = time();
         $res_pic = true;
         if ($request->hasFile('pic')) {
             $pic = $request->only('pic')['pic'];
@@ -145,7 +149,7 @@ class GoodsController extends Controller
             $pic->move('./uploads/shangpin/', $name . '.' . $suffix);
             $pics['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
             $pics['good_id'] = $id;
-            $res_pic = Pic::select()->where('good_id', $id)->update($pics);
+            $res_pic = Picture::select()->where('good_id', $id)->update($pics);
         }
         $res = Good::select()->where('id', $id)->update($data);
         if ($res && $res_pic) {

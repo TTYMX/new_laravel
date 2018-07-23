@@ -2,6 +2,26 @@
 <title>商品详情页面</title>
 </head>
 <body>
+    <div class="row" style="position:absolute;left:35%;top:80px; width:50%;">
+        <div class="col-lg-6 col-lg-offset-3">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissable">
+                    {{session('success')}}
+                    <button type="" class="close" data-dismiss="alert" aria-label="Close">
+                        &times;
+                    </button>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissable">
+                    {{session('error')}}
+                    <button type="" class="close" data-dismiss="alert" aria-label="Close">
+                        &times;
+                    </button>
+                </div>
+            @endif
+        </div>
+    </div>
     <div>
         <img src="{{url($pic->path)}}" height="300" alt="">
     </div>
@@ -15,15 +35,15 @@
                 echo '<span style="color:red;">'.$good->total.'</span>';
             } ?></h3>
     </div>
-    <button type="button" buy="0" class="btn btn-warning" id="addCard">加入购物车</button>
-    <button type="button" buy="1" class="btn btn-success" id="buyNow">立即购买</button>
-    <a href="{{url('home/index/card')}}"><button class="btn">前往购物车</button></a>
+    <button type="button" buy="0" class="btn me btn-warning" id="addCard">加入购物车</button>
+    <button type="button" buy="1" class="btn me btn-success" id="buyNow">立即购买</button>
+    <a href="{{url('home/card/list')}}"><button class="btn">前往购物车</button></a>
 
     <script type="text/javascript">
         $(function(){
             var total = "{{$good->total}}";
             var id = "{{$good->id}}";
-            $('.btn').click(function(){
+            $('.me').click(function(){
                 if (total > 0) {
                     if (parseInt($(this).attr('buy'))){
                         //执行购买操作
@@ -31,12 +51,13 @@
                     } else {
                         //执行添加购物车操作
                         $.ajax({
-                            type: 'POST',
-                            url: '/home/index/card',
-                            data: {'id': id},
+                            type: 'GET',
+                            url: '/home/card/card',
+                            data: {'good_id': id},
                             success: function (data) {
+                                location.href='';
                                 if (!data.errcode) {
-                                    btn.parents('tr').remove();
+                                    alert(data.msg)
                                 } else {
                                     alert(data.msg);
                                 }

@@ -25,7 +25,7 @@
 <body>
 这个确实是首页
 <div id="masonry" class="container-fluid">
-    @if ($goods);
+    @if ($goods)
         @foreach ($goods as $k=>$v)
             <div class="box">
                 <a href="{{url('/home/index/detail?id='.$v->id)}}">
@@ -43,7 +43,7 @@
                 </div>
             </div>
         @endforeach
-    @endif;
+    @endif
 
     {{----------------------------------------------------}}
 

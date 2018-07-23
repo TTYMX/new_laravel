@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Cate extends Model
+class Card extends Model
 {
-    protected $table = 'lh_cates';
+    protected $table = 'lh_cards';
     protected $primaryKey = 'id';
 }

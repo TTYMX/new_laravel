@@ -49,7 +49,7 @@
                                         <label>男</label>
                                         <input type="radio" name="sex" value="1">
                                         <label>女</label>
-                                        <input type="radio" name="sex" value="0" checked>
+                                        <input type="radio" name="sex" value="2" checked>
                                     </div>
                                     <div class="form-group">
                                         <label>头像</label>

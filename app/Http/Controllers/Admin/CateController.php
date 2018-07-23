@@ -61,9 +61,12 @@ class CateController extends Controller
         } else {
             $res = Cate::select()->where('id', $data['pid'])->first();
             $data['path'] = $res->path . ',' . $data['pid'];
-        }
-        $data['created_at'] = time();
-        $res = Cate::select()->insert($data);
+	}
+	$cate = new Cate;
+	$cate->pid  = $data['pid'];
+	$cate->name = $data['name'];
+	$cate->path = $data['path'];
+        $res = $cate->save();
         if ($res) {
             return redirect('/admin/cate/index')->with('success', '分类添加成功');
         } else {
@@ -142,7 +145,6 @@ class CateController extends Controller
     public function update(Request $request)
     {
         $data = $request->only(['name']);
-        $data['updated_at'] = time();
         $id = $request->input('id');
         $res = Cate::select()->where('id', $id)->update($data);
         if ($res) {

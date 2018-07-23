@@ -18,7 +18,6 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $num = $request->input('num', 10);
-        //判断是否有查询条件
         if ($request->input('keywords')) {
             $keywords = $request->input('keywords');
             $users = User::select()->where('username','like', '%' . $keywords . '%')->paginate($num);
@@ -26,7 +25,7 @@ class UserController extends Controller
             $users = User::select()->paginate($num);
         }
         $list = $request->all();
-        return view('Admin.user.index', ['users' => $users, 'list' => $list]);
+        return view('admin.user.index', ['users' => $users, 'list' => $list]);
     }
 
     /**
@@ -49,8 +48,16 @@ class UserController extends Controller
         $data['token'] = str_random(50);
         $data['password'] = Hash::make($data['password']);
         $data['pic'] = (string)$this->upload($request, 'pic');
-        $data['created_at'] = time();
-        $res = User::insert($data);
+	$user = new User;
+        $user->username = $data['username'];
+        $user->password = $data['password'];
+        $user->email = $data['email'];
+        $user->phone = $data['phone'];
+        $user->token = $data['token'];
+        $user->auth = isset($data['auth']) ? $data['auth'] : 0;
+        $user->sex = $data['sex'];
+        $user->pic = $data['pic'];
+        $res = $user->save();
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户添加成功');
         } else {
@@ -89,7 +96,6 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $data = $request->only(['username', 'password', 'email', 'phone']);
-        $data['updated_at'] = time();
         //密码处理 加密
         $data['password'] = Hash::make($data['password']);
         if ($request->hasFile('pic')) {

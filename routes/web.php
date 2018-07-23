@@ -17,7 +17,10 @@ Route::get('/home/login/login','Home\LoginController@login');
 
 Route::middleware(['HomeLogin'])->prefix('home/')->group(function () {
     Route::get('card/card', 'Home\CardController@card');
+    Route::get('card/delete', 'Home\CardController@delete');
     Route::get('card/buy', 'Home\CardController@buy');
+    Route::get('card/card', 'Home\CardController@card');
+    Route::get('card/list', 'Home\CardController@list');
 });
 /**
  * 后台  统一中间件
@@ -49,6 +52,9 @@ Route::middleware(['AdminLogin'])->prefix('admin/')->group(function () {
     Route::post('goods/insert', 'Admin\GoodsController@insert');
     Route::post('goods/delete', 'Admin\GoodsController@delete');
     Route::post('goods/updateStatus', 'Admin\GoodsController@updateStatus');
+
+    //订单管理
+    Route::get('orders/index', 'Admin\OrdersController@index');
 
 });
 //后台的登录

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 
@@ -48,9 +49,7 @@ class LoginController extends Controller
 
     public function check()
     {
-        echo 'check';die;
         $echoStr = $_GET["echostr"];
-
         //valid signature , option
         if($this->checkSignature()){
             echo $echoStr;
@@ -58,14 +57,11 @@ class LoginController extends Controller
         }
     }
 
-    public function responseMsg()
+    public function responseMsg(Request $request)
     {
         //get post data, May be due to the different environments
         $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
-
-        //extract post data
         if (!empty($postStr)){
-
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
             $fromUsername = $postObj->FromUserName;
             $toUsername = $postObj->ToUserName;

@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Home;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\admin\CateController;
 use Illuminate\Http\Request;
-use DB;
+use App\Models\Good;
+use App\Models\Picture;
 
 
 class IndexController extends Controller
@@ -16,30 +17,27 @@ class IndexController extends Controller
      */
     public function index(Request $request)
     {
-        echo '首页';
-        $goods = DB::table('lh_goods')
-            ->select('lh_goods.*', 'lh_pics.path')
-            ->join('lh_pics', 'lh_pics.good_id', '=', 'lh_goods.id')
+        echo '<h1>首页展示</h1>';
+        $goods = Good::selectRaw('lh_goods.*,lh_pics.path')
+            ->leftJoin('lh_pics', 'lh_pics.good_id', '=', 'lh_goods.id')
             ->paginate(10);
         return view('home/index/index', ['goods' => $goods]);
-        // echo '<pre>';
-        // var_dump($goods);die;
-        // return view('home/index/index', ['cate' => $cate, 'cate1' => $cate1, 'goods' => $goods, 'list' => $list]);
     }
 
+    /**
+     * 详情页面
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function detail(Request $request)
     {
         $id = $request->input('id');
-        $good = DB::table('lh_goods')->where('id',$id)->first();
-        $pic = DB::table('lh_pics')->where('good_id',$id)->first();
+        $good = Good::select()->where('id',$id)->first();
+        $pic = Picture::select()->where('good_id',$id)->first();
         return view('home/index/detail',['good' => $good,'pic'=>$pic]);
     }
 
 
-    public function card(Request $request)
-    {
-        return view('home/index/card');
-    }
 
     public function takeGoods(Request $request)
     {
