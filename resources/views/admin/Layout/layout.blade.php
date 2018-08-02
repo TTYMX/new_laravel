@@ -289,71 +289,71 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="#"><i class="glyphicon glyphicon-th-list"></i> 评论管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
+                    {{--<li>--}}
+                        {{--<a href="#"><i class="glyphicon glyphicon-th-list"></i> 评论管理<span class="fa arrow"></span></a>--}}
+                        {{--<ul class="nav nav-second-level">--}}
 
-                            <li>
-                                <a href="{{url('/admin/comment/index')}}">评论列表</a>
-                            </li>
-                        </ul>
-                    </li>
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/comment/index')}}">评论列表</a>--}}
+                            {{--</li>--}}
+                        {{--</ul>--}}
+                    {{--</li>--}}
                     <li>
                         <a href="#"><i class="fa fa-table fa-fw"></i>订单管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
                                 <a href="{{url('/admin/orders/index')}}">订单列表</a>
                             </li>
-                            <li>
-                                <a href="{{url('/admin/address/index')}}">订单地址列表</a>
-                            </li>
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/address/index')}}">订单地址列表</a>--}}
+                            {{--</li>--}}
                         </ul>
                     </li>
-                    <li>
-                        <a href="#"><i class="fa fa-image fa-fw"></i>轮播管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="{{url('/admin/carousel/add')}}">轮播图片添加</a>
-                            </li>
-                            <li>
-                                <a href="{{url('/admin/carousel/index')}}">轮播图片列表</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-sitemap fa-fw"></i>链接管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="{{url('/admin/chaining/add')}}">链接添加</a>
-                            </li>
-                            <li>
-                                <a href="{{url('/admin/chaining/index')}}">链接列表</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-sitemap fa-fw"></i>公告管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="{{url('/admin/notice/add')}}">公告添加</a>
-                            </li>
-                            <li>
-                                <a href="{{url('/admin/notice/index')}}">公告列表</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-comment fa-fw"></i>广告管理<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="{{url('/admin/advert/add')}}">广告添加</a>
-                            </li>
-                            <li>
-                                <a href="{{url('/admin/advert/index')}}">广告列表</a>
-                            </li>
-                        </ul>
-                    </li>
+                    {{--<li>--}}
+                        {{--<a href="#"><i class="fa fa-image fa-fw"></i>轮播管理<span class="fa arrow"></span></a>--}}
+                        {{--<ul class="nav nav-second-level">--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/carousel/add')}}">轮播图片添加</a>--}}
+                            {{--</li>--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/carousel/index')}}">轮播图片列表</a>--}}
+                            {{--</li>--}}
+                        {{--</ul>--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a href="#"><i class="fa fa-sitemap fa-fw"></i>链接管理<span class="fa arrow"></span></a>--}}
+                        {{--<ul class="nav nav-second-level">--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/chaining/add')}}">链接添加</a>--}}
+                            {{--</li>--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/chaining/index')}}">链接列表</a>--}}
+                            {{--</li>--}}
+                        {{--</ul>--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a href="#"><i class="fa fa-sitemap fa-fw"></i>公告管理<span class="fa arrow"></span></a>--}}
+                        {{--<ul class="nav nav-second-level">--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/notice/add')}}">公告添加</a>--}}
+                            {{--</li>--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/notice/index')}}">公告列表</a>--}}
+                            {{--</li>--}}
+                        {{--</ul>--}}
+                        {{--<!-- /.nav-second-level -->--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a href="#"><i class="fa fa-comment fa-fw"></i>广告管理<span class="fa arrow"></span></a>--}}
+                        {{--<ul class="nav nav-second-level">--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/advert/add')}}">广告添加</a>--}}
+                            {{--</li>--}}
+                            {{--<li>--}}
+                                {{--<a href="{{url('/admin/advert/index')}}">广告列表</a>--}}
+                            {{--</li>--}}
+                        {{--</ul>--}}
+                    {{--</li>--}}
                 </ul>
             </div>
         </div>

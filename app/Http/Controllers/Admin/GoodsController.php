@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Good;
 use App\Models\Picture;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class GoodsController extends Controller
 {
@@ -96,7 +96,7 @@ class GoodsController extends Controller
      */
     public function bycateid($cate_id)
     {
-        $res = DB::table('cate')->where('id', '=', $cate_id)->value('name');
+        $res = Cate::where('id', '=', $cate_id)->value('name');
         return $res;
     }
 
@@ -127,8 +127,8 @@ class GoodsController extends Controller
     {
         $cates = CateController::cates();
         $id = $request->input('id');
-        $goods = Good::select()->where('id', $id)->first();
-        $pics = Picture::select()->where('good_id', $id)->first();
+        $goods = Good::where('id', $id)->first();
+        $pics = Picture::where('good_id', $id)->first();
         return view('/admin/goods/edit', ['goods' => $goods, 'cates' => $cates, 'pics' => $pics]);
     }
 
@@ -149,9 +149,9 @@ class GoodsController extends Controller
             $pic->move('./uploads/shangpin/', $name . '.' . $suffix);
             $pics['path'] = '/uploads/shangpin/' . $name . '.' . $suffix;
             $pics['good_id'] = $id;
-            $res_pic = Picture::select()->where('good_id', $id)->update($pics);
+            $res_pic = Picture::where('good_id', $id)->update($pics);
         }
-        $res = Good::select()->where('id', $id)->update($data);
+        $res = Good::where('id', $id)->update($data);
         if ($res && $res_pic) {
             return redirect('/admin/goods/index')->with('success', '商品修改成功');
         } else {

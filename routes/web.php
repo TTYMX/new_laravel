@@ -11,16 +11,35 @@
 |
 */
 //首页
-Route::get('/', 'Home\IndexController@index');
-Route::get('/home/index/detail','Home\IndexController@detail');
+
+Route::any('/wechat','WechatController@serve');
+Route::any('/test','WechatController@test');
+
+
+
+//首页信息
+Route::get('/', 'Home\IndexController@indexShow');
+Route::get('/home/index/index','Home\IndexController@index');
+//详情页面
+Route::get('/home/index/detail','Home\IndexController@detailShow');
+Route::get('/home/detail/detail','Home\IndexController@detail');
+//登录方法
 Route::get('/home/login/login','Home\LoginController@login');
+//登录页面
+Route::get('/home/login/index','Home\LoginController@index');
+
+
 
 Route::middleware(['HomeLogin'])->prefix('home/')->group(function () {
+    //购物车处理
     Route::get('card/card', 'Home\CardController@card');
     Route::get('card/delete', 'Home\CardController@delete');
-    Route::get('card/buy', 'Home\CardController@buy');
-    Route::get('card/card', 'Home\CardController@card');
     Route::get('card/list', 'Home\CardController@list');
+    //订单列表处理
+    Route::get('order/buy', 'Home\OrderController@buy');
+    Route::get('order/buyList', 'Home\OrderController@buyList');
+    //添加评论
+    Route::get('comment/add', 'Home\CommentController@add');
 });
 /**
  * 后台  统一中间件
@@ -64,3 +83,6 @@ Route::post('/login/adminCheck', 'Admin\LoginController@checkLogin');
 //excel测试
 Route::get('/admin/test', 'Admin\TestController@test');
 Route::get('/admin/export', 'Admin\TestController@export');
+//excel测试
+Route::get('excel/export','Admin\ExcelController@export');
+Route::get('excel/import','Admin\ExcelController@import');

@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Request;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\Models\Active;
+use EasyWeChat\Factory;
+use EasyWeChat\Foundation\Application;
+
+use Illuminate\Support\Facades\Redis;
 
 
-define("TOKEN", "weixin");
+
+define("TOKEN", "xianfan");
 
 class LoginController extends Controller
 {
@@ -22,92 +27,30 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
-
     /**
      * Where to redirect users after login.
-     *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
+
+    protected $appid = 'wx8cb58549d7d11068';
+    protected $appsecret = '9b3edf4f072e5c0b6aebebbdb7d407db';
 
     /**
      * Create a new controller instance.
-     *
      * @return void
      */
     public function __construct()
     {
-        //$this->middleware('guest')->except('logout');
+
     }
-
-    public function login()
+    public function login(Request $request)
     {
-        return view('home/login/login');
-    }
-
-
-    public function check()
-    {
-        $echoStr = $_GET["echostr"];
-        //valid signature , option
-        if($this->checkSignature()){
-            echo $echoStr;
-            exit;
-        }
-    }
-
-    public function responseMsg(Request $request)
-    {
-        //get post data, May be due to the different environments
-        $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
-        if (!empty($postStr)){
-            $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-            $fromUsername = $postObj->FromUserName;
-            $toUsername = $postObj->ToUserName;
-            $keyword = trim($postObj->Content);
-            $time = time();
-            $textTpl = "<xml>  
-                            <ToUserName><![CDATA[%s]]></ToUserName>  
-                            <FromUserName><![CDATA[%s]]></FromUserName>  
-                            <CreateTime>%s</CreateTime>  
-                            <MsgType><![CDATA[%s]]></MsgType>  
-                            <Content><![CDATA[%s]]></Content>  
-                            <FuncFlag>0</FuncFlag>  
-                            </xml>";
-            if(!empty( $keyword ))
-            {
-                $msgType = "text";
-                $contentStr = "Welcome to wechat world!";
-                $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
-                echo $resultStr;
-            }else{
-                echo "Input something...";
-            }
-
-        }else {
-            echo "";
-            exit;
-        }
-    }
-
-    private function checkSignature()
-    {
-        $signature = $_GET["signature"];
-        $timestamp = $_GET["timestamp"];
-        $nonce = $_GET["nonce"];
-
-        $token = TOKEN;
-        $tmpArr = array($token, $timestamp, $nonce);
-        sort($tmpArr);
-        $tmpStr = implode( $tmpArr );
-        $tmpStr = sha1( $tmpStr );
-
-        if( $tmpStr == $signature ){
-            return true;
-        }else{
-            return false;
-        }
+        //$app = Factory::officialAccount(config('wechat'));
+        //$user = $app->user;
+      
+        $app = new Application(config('wechat'));
+        $user = $app->oauth->user();
     }
 
 
