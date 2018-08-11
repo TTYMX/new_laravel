@@ -74,6 +74,11 @@ Route::middleware(['AdminLogin'])->prefix('admin/')->group(function () {
 
     //订单管理
     Route::get('orders/index', 'Admin\OrdersController@index');
+    Route::get('orders/edit', 'Admin\OrdersController@edit');
+
+    //销售管理
+    Route::get('sail/index', 'Admin\OrdersController@sail');
+    Route::get('sail/excel', 'Admin\OrdersController@excel');
 
 });
 //后台的登录

@@ -75,7 +75,7 @@ return [
      */
     'oauth' => [
         'only_wechat_browser' => false,
-        'scopes'   => array_map('trim', explode(',', env('WECHAT_OAUTH_SCOPES', 'snsapi_base'))),
+        'scopes'   => array_map('trim', explode(',', env('WECHAT_OAUTH_SCOPES', 'snsapi_userinfo'))),
         'callback' => env('WECHAT_OAUTH_CALLBACK', '/examples/oauth_callback.php'),
     ],
 
@@ -105,7 +105,7 @@ return [
         'nickname' => 'overtrue',
         'sex' => '1',
         'province' => '北京',
-        'city' => '北京',
+        'city' => '北京wechat',
         'country' => '中国',
         'headimgurl' => 'http://wx.qlogo.cn/mmopen/C2rEUskXQiblFYMUl9O0G05Q6pKibg7V1WpHX6CIQaic824apriabJw4r6EWxziaSt5BATrlbx1GVzwW2qjUCqtYpDvIJLjKgP1ug/0',
     ],

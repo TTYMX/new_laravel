@@ -1,9 +1,6 @@
 <template>
     <div>
-        <div>
-            <img id="card-img" src="https://www.baidu.com/img/dong_76e40b922934aed1b944458c58a8c0ef.gif" alt="">
-        </div>
-        尾部
+        这个是尾部
     </div>
 </template>
 

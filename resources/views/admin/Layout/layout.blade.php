@@ -304,9 +304,9 @@
                             <li>
                                 <a href="{{url('/admin/orders/index')}}">订单列表</a>
                             </li>
-                            {{--<li>--}}
-                                {{--<a href="{{url('/admin/address/index')}}">订单地址列表</a>--}}
-                            {{--</li>--}}
+                            <li>
+                                <a href="{{url('/admin/sail/index')}}">销售列表</a>
+                            </li>
                         </ul>
                     </li>
                     {{--<li>--}}
@@ -481,7 +481,7 @@
         <!-- /#page-wrapper -->
     @show
 </div>
-<!-- /#wrapper -->
+<!-- /#wrapper -->css
 
 <!-- jQuery -->
 <script src="/admincss/bower_components/jquery/dist/jquery.min.js"></script>

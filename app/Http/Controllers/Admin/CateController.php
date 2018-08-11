@@ -61,11 +61,11 @@ class CateController extends Controller
         } else {
             $res = Cate::select()->where('id', $data['pid'])->first();
             $data['path'] = $res->path . ',' . $data['pid'];
-	}
-	$cate = new Cate;
-	$cate->pid  = $data['pid'];
-	$cate->name = $data['name'];
-	$cate->path = $data['path'];
+        }
+        $cate = new Cate;
+        $cate->pid = $data['pid'];
+        $cate->name = $data['name'];
+        $cate->path = $data['path'];
         $res = $cate->save();
         if ($res) {
             return redirect('/admin/cate/index')->with('success', '分类添加成功');
@@ -114,14 +114,14 @@ class CateController extends Controller
         $id = $request->input('id');
         $resCate = Cate::select()->where('pid', '=', $id)->first();
         if ($resCate) {
-            $this->returnJson(10010,'存在子类,不允许删除');
+            $this->returnJson(10010, '存在子类,不允许删除');
         }
         $resGoods = DB::table('lh_goods')->where('cate_id', '=', $id)->first();
         if ($resGoods) {
-            $this->returnJson(10011,'存在商品,不允许删除');
+            $this->returnJson(10011, '存在商品,不允许删除');
         }
         $resDel = Cate::select()->where('id', '=', $id)->delete();
-        $resDel ? $this->returnJson(0,'删除成功') : $this->returnJson(10010,'删除失败');
+        $resDel ? $this->returnJson(0, '删除成功') : $this->returnJson(10010, '删除失败');
     }
 
     /**

@@ -68,13 +68,13 @@
                                            id="dataTables-example" role="grid"
                                            aria-describedby="dataTables-example_info">
                                         <thead>
-                                        <th style="width:6%">订单ID</th>
-                                        <th style="width:8%">用户名称</th>
-                                        <th style="width:5%">金额</th>
-                                        <th style="width:15%">订单号</th>
-                                        <th style="width:12%">状态</th>
-                                        <th style="width:15%">购买时间</th>
-                                        <th style="width:15%">操作</th>
+                                            <th style="width:6%">订单ID</th>
+                                            <th style="width:8%">用户名称</th>
+                                            <th style="width:5%">金额</th>
+                                            <th style="width:15%">订单号</th>
+                                            <th style="width:12%">状态</th>
+                                            <th style="width:15%">购买时间</th>
+                                            <th style="width:15%">操作</th>
                                         </thead>
 
                                         @foreach($orders as $k=>$v)
@@ -83,7 +83,6 @@
                                                 <td>{{$v->username}}</td>
                                                 <td>{{$v->price}}</td>
                                                 <td>{{$v->order_num}}</td>
-
                                                 @if ($v->tatus == 1)
                                                     <td>未付款</td>
                                                 @else
@@ -92,10 +91,15 @@
                                                 <td>{{$v->created_at}}</td>
                                                 @if ($v->status == 1)
                                                     <td>
-                                                        <a href="/admin/orders/edit?id={{$v->id}}"
-                                                           class="btn btn-sm btn-success">
+                                                        <button class="btn btn-sm btn-success send" edit="{{$v->id}}">
                                                             发货
-                                                        </a>
+                                                        </button>
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success send" edit="{{$v->id}}">
+                                                            已发货
+                                                        </button>
                                                     </td>
                                                 @endif
                                             </tr>
@@ -112,4 +116,61 @@
             </div>
         </div>
     </div>
+@endsection
+@section('js')
+    <script type="text/javascript">
+        $(function () {
+            $('.send').click(function () {
+                var btn = $(this);
+                var id = $(this).attr('edit');
+                var url = "<?php echo url('/admin/orders/edit'); ?>";
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: {id:id},
+                    dataType: "json",
+                    success: function(data){
+                        if (!data.errcode) {
+                            alert('发送成功');
+                            btn.html('已发货');
+                        } else {
+                            //删除失败
+                            alert('发送失败');
+                        }
+                    }
+                });
+            })
+        })
+        // $.ajaxSetup({
+        //     headers: {
+        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //     }
+        // });
+        // $('.delete-btn').click(function () {
+        //     var id = $(this).attr('del');
+        //     var btn = $(this);
+        //     $.post('/admin/goods/delete', {id: id}, function (data) {
+        //         if (!data.errcode) {
+        //             btn.parents('tr').remove();
+        //         } else {
+        //             //删除失败
+        //             alert('删除失败');
+        //         }
+        //     });
+        // })
+        // //上架下架操作
+        // $('.update-btn').click(function () {
+        //     var btn = $(this);
+        //     var id = $(this).attr('stid');
+        //     var status = $(this).attr('status');
+        //     status == 2 ? $(this).attr('status',1) : $(this).attr('status',2);
+        //     $.post('/admin/goods/updateStatus', {'id': id,'status':status}, function (data) {
+        //         if (!data.errcode) {
+        //             btn.text(data.msg);
+        //         }
+        //     }, 'json');
+        // })
+
+    </script>
+
 @endsection

@@ -163,14 +163,15 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-        Overtrue\LaravelWechat\ServiceProvider::class,
 
         /*
          * Package Service Providers...
          */
-
-        /*
+	php artisan make:export UsersExport --model=User
+        Overtrue\LaravelWechat\ServiceProvider::class,
+	zgldh\QiniuStorage\QiniuFilesystemServiceProvider::class
+	
+	/*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
@@ -229,6 +230,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'EasyWeChat' => Overtrue\LaravelWechat\Facade::class,
+
     ],
 
 ];

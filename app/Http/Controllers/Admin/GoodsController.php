@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Good;
 use App\Models\Picture;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class GoodsController extends Controller
 {

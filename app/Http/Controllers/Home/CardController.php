@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Order;
 use App\Models\Good;
 use App\Models\Card;
+use session;
 use DB;
 
 
@@ -19,14 +19,14 @@ class CardController extends Controller
      */
     public function card(Request $request)
     {
-        $goodId = (int)$request->input('good_id');
-        $goodInfo = Good::select()->where('id', $goodId)->first();
+        $goodId = (int)$request->input('id');
+        $goodInfo = Good::where('id', $goodId)->first();
         if ($goodInfo->total < 1) {
             echo '卖完了,别捣乱';
             exit;
         }
         $userId = session('uid');
-        $orderInfo = Card::select()->where('good_id', $goodId)->where('user_id', $userId)->first();
+        $orderInfo = Card::where('good_id', $goodId)->where('user_id', $userId)->first();
         DB::beginTransaction();
         if (!$orderInfo) {
             $card = new Card;
@@ -44,10 +44,10 @@ class CardController extends Controller
         $resGood = Good::where('id', $goodId)->update(['total' => $goodInfo->total - 1]);
         if ($resGood && $resCard) {
             DB::commit();
-            $this->returnJson(0, '添加成功');
+            return view('home/card/success');
         } else {
             DB::rollback();
-            $this->returnJson(10010, '添加失败');
+            return view('home/card/success');
         }
     }
 
@@ -57,11 +57,12 @@ class CardController extends Controller
      */
     public function delete(Request $request)
     {
-        $id = $this->input('id');
+        $id = $request->input('id');
         $res = Card::where('id', $id)->delete();
         if ($res) {
-            redirect(url('/'));
+            $this->returnJson(0,'success');
         }
+        $this->returnJson(10010,'success');
     }
 
     /**
@@ -72,10 +73,14 @@ class CardController extends Controller
     public function list(Request $request)
     {
         $cards = Card::selectRaw('lh_cards.*,lh_pics.path')
-            // ->where('user_id',session('uid'))
+            ->where('user_id',session('uid'))
             ->leftJoin('lh_pics', 'lh_cards.good_id', '=', 'lh_pics.good_id')
             ->get();
-        return view('home/card/card', ['cards' => $cards]);
+        if ($request->ajax()) {
+            $this->returnJson(0,$cards);
+        } else {
+            return view('home/card/card', ['cards' => $cards]);
+        }
     }
 
 

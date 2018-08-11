@@ -3,24 +3,48 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use EasyWeChat\Factory;
+use Illuminate\Http\Request;
+use App\Models\WxUser;
+use Exception;
 
 class HomeLoginMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        //通过session来检测用户是否登录
-        if(session('uid')){
-            //进入下一层请求
+        if (session('uid')) {
             return $next($request);
-        }else{
-            return redirect('/home/login/login')->with('error','您还没有登录');
+        } else {
+            //未登录
+            $app = Factory::officialAccount(config('wechat'));
+            $oauth = $app->oauth;
+            try {
+                $appInfo = $oauth->user();
+                $userInfo = $appInfo->original;
+                $user = new WxUser;
+                $res = $user::where('openid', $userInfo['openid'])->first();
+                if (!$res) {
+                    $user->nickname = $userInfo['nickname'];
+                    $user->avatar = $userInfo['headimgurl'];
+                    $user->sex = $userInfo['sex'];
+                    $user->openid = $userInfo['openid'];
+                    $user->save();
+                    $uid = $user->id;
+                } else {
+                    $uid = $res->id;
+                }
+                session(['uid'=>$uid]);
+                return $next($request);
+            } catch (Exception $e) {
+                $response = $oauth->redirect($request->fullUrl());
+                return $response;
+            }
         }
     }
 }

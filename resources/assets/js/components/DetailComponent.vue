@@ -14,16 +14,17 @@
                 </div>
             </h3>
         </div>
-        <button type="button" v-on:click="buy(good.total,good.id,0)" class="btn me btn-warning">加入购物车</button>
-        <button type="button" v-on:click="buy(good.total,good.id,1)" class="btn me btn-success">立即购买</button>
-        <button class="btn" type="button" v-on:click="jump('/home/card/list')">前往购物车</button>
-        <button class="btn" type="button" v-on:click="jump('/home/order/buyList')">前往我的订单</button>
+        <button type="button" v-on:click="jump('/home/card/card?id='+good.id)" class="btn btn-warning">加入购物车</button>
+        <button type="button" v-on:click="jump('/home/order/buy?id='+good.id)" class="btn btn-success">立即购买</button>
+        <button type="button" v-on:click="jump('/home/card/list')" class="btn btn-warning">前往购物车</button>
+        <button type="button" v-on:click="jump('/home/order/buyList')" class="btn btn-warning">前往我的订单</button>
     </div>
 </template>
 
 <script>
-    prop('id');
+
     export default {
+        props: ['id'],
         data() {
             return {
                 good: [],
@@ -42,30 +43,30 @@
         computed: {},
         methods: {
             buy: function (total, id, $buy) {
-                if (total > 0) {
-                    console.log($buy);
-                    if ($buy) {
-                        //执行购买操作
-                        axios.get(buy_url + '?id=' + id).then(function (result) {
-                            if (!result.data.errcode) {
-                                alert(result.data.errcode.msg)
-                            } else {
-                                alert('购买失败')
-                            }
-                        });
-                    } else {
-                        //执行添加购物车操作
-                        axios.get(card_url).then(function (result) {
-                            console.log(result.data);
-                            that.goods = result.data.msg.data;
-                        });
-                    }
-                } else {
-                    alert('卖完了');
-                }
-
+                // if (total > 0) {
+                //     console.log($buy);
+                //     if ($buy) {
+                //         //执行购买操作
+                //         axios.get(buy_url + '?id=' + id).then(function (result) {
+                //             if (!result.data.errcode) {
+                //                 alert(result.data.errcode.msg)
+                //             } else {
+                //                 alert('购买失败')
+                //             }
+                //         });
+                //     } else {
+                //         //执行添加购物车操作
+                //         axios.get(card_url).then(function (result) {
+                //             console.log(result.data);
+                //             that.goods = result.data.msg.data;
+                //         });
+                //     }
+                // } else {
+                //     alert('卖完了');
+                // }
             },
             jump:function (url) {
+                console.log(1)
                 location.href = url;
             }
         }

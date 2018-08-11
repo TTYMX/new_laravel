@@ -48,7 +48,7 @@ class UserController extends Controller
         $data['token'] = str_random(50);
         $data['password'] = Hash::make($data['password']);
         $data['pic'] = (string)$this->upload($request, 'pic');
-	$user = new User;
+	    $user = new User;
         $user->username = $data['username'];
         $user->password = $data['password'];
         $user->email = $data['email'];
