@@ -20,9 +20,9 @@ class UserController extends Controller
         $num = $request->input('num', 10);
         if ($request->input('keywords')) {
             $keywords = $request->input('keywords');
-            $users = User::select()->where('username','like', '%' . $keywords . '%')->paginate($num);
+            $users = User::where('username','like', '%' . $keywords . '%')->paginate($num);
         } else {
-            $users = User::select()->paginate($num);
+            $users = User::paginate($num);
         }
         $list = $request->all();
         return view('admin.user.index', ['users' => $users, 'list' => $list]);
@@ -84,7 +84,7 @@ class UserController extends Controller
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $users = User::select()->where('id', $id)->first();
+        $users = User::where('id', $id)->first();
         return view('admin/user/edit', ['users' => $users]);
     }
 

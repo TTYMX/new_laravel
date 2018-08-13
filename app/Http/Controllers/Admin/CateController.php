@@ -59,7 +59,7 @@ class CateController extends Controller
         if ($data['pid'] == 0) {
             $data['path'] = 0;
         } else {
-            $res = Cate::select()->where('id', $data['pid'])->first();
+            $res = Cate::where('id', $data['pid'])->first();
             $data['path'] = $res->path . ',' . $data['pid'];
         }
         $cate = new Cate;
@@ -95,7 +95,7 @@ class CateController extends Controller
      */
     public static function catesByPid($pid)
     {
-        $res = Cate::select()->where('pid', $pid)->get();
+        $res = Cate::where('pid', $pid)->get();
         $data = [];
         foreach ($res as $k => $v) {
             $v->sub = self::catesByPid($v->id);
@@ -112,7 +112,7 @@ class CateController extends Controller
     public function delete(Request $request)
     {
         $id = $request->input('id');
-        $resCate = Cate::select()->where('pid', '=', $id)->first();
+        $resCate = Cate::where('pid', '=', $id)->first();
         if ($resCate) {
             $this->returnJson(10010, '存在子类,不允许删除');
         }
@@ -120,7 +120,7 @@ class CateController extends Controller
         if ($resGoods) {
             $this->returnJson(10011, '存在商品,不允许删除');
         }
-        $resDel = Cate::select()->where('id', '=', $id)->delete();
+        $resDel = Cate::where('id', '=', $id)->delete();
         $resDel ? $this->returnJson(0, '删除成功') : $this->returnJson(10010, '删除失败');
     }
 
@@ -132,7 +132,7 @@ class CateController extends Controller
     public function edit(Request $request)
     {
         $id = $request->input('id');
-        $cates = Cate::select()->where('id', $id)->first();
+        $cates = Cate::where('id', $id)->first();
         return view('/admin/cate/edit', ['cates' => $cates]);
 
     }
@@ -146,7 +146,7 @@ class CateController extends Controller
     {
         $data = $request->only(['name']);
         $id = $request->input('id');
-        $res = Cate::select()->where('id', $id)->update($data);
+        $res = Cate::where('id', $id)->update($data);
         if ($res) {
             return redirect('/admin/cate/index')->with('success', '分类修改成功');
         } else {

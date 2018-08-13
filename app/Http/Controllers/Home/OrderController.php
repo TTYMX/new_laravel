@@ -20,7 +20,7 @@ class OrderController extends Controller
     public function buy(Request $request)
     {
         $id = (int)$request->input('id');
-        $goodInfo = Good::select()->where('id', $id)->first();
+        $goodInfo = Good::where('id', $id)->first();
         if ($goodInfo->total < 1) {
             return view('home/order/fail',['message'=>'卖完了']);
         }
@@ -74,6 +74,9 @@ class OrderController extends Controller
         return view('home/order/ping',['order'=>$orderInfo,'good'=>$goodInfo,'pic'=>$picInfo]);
     }
 
+    /**
+     * @param Request $request
+     */
     public function comment(Request $request)
     {
         $id = (int) $request->input('id');

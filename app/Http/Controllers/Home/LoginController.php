@@ -34,5 +34,10 @@ class LoginController extends Controller
         echo 'login';die;
     }
 
+    public function vue(Request $request)
+    {
+        return view('home/index/index');
+    }
+
 
 }

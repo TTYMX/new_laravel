@@ -30,7 +30,7 @@ class LoginController extends Controller
     public function checkLogin(StoreAdminPost $request)
     {
         $fields = $request->only(['username', 'password']);
-        $userInfo = User::select()->where('username',$fields['username'])->first();
+        $userInfo = User::where('username',$fields['username'])->first();
         if (!$userInfo) {
             return back()->with('error', '用户名或密码不正确');
         }

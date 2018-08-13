@@ -19,7 +19,6 @@ class SendMsg implements ShouldQueue
 
     protected $openid;
     protected $nickname;
-    public $tries = 5;
     /**
      * Create a new job instance.
      *
