@@ -32,8 +32,8 @@
         created() {
             var that = this;
             axios.get(url).then(function (result) {
-                console.log(result.data);
-                that.goods = result.data.msg;
+                console.log(result.data.msg.data);
+                that.goods = result.data.msg.data;
             });
         },
         computed: {

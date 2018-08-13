@@ -54,7 +54,6 @@ class OrderController extends Controller
             ->leftJoin('lh_pics','lh_orders.good_id','=','lh_pics.good_id')
             ->where('user_id','=',session('uid'))
             ->get();
-
         if ($request->ajax()) {
             $this->returnJson(0,$buyList);
         } else {
@@ -68,12 +67,27 @@ class OrderController extends Controller
      */
     public function ping(Request $request)
     {
-
         $id = (int) $request->input('id');
         $orderInfo = Order::find($id);
         $goodInfo = Good::find($orderInfo->good_id);
         $picInfo = Picture::where('good_id',$orderInfo->good_id)->first();
         return view('home/order/ping',['order'=>$orderInfo,'good'=>$goodInfo,'pic'=>$picInfo]);
     }
+
+    public function comment(Request $request)
+    {
+        $id = (int) $request->input('id');
+        $text = (int) $request->input('text');
+        $data = array('comment'=>$text,'is_comment'=>1);
+        $res = Order::where('id',$id)->update($data);
+        if ($res) {
+            $this->returnJson(0,'');
+        } else {
+            $this->returnJson(10010,'');
+        }
+    }
+
+
+
 }
 

@@ -21,6 +21,7 @@ include_once('/home/layout/top')
     <page-index></page-index>
 </div>
 <script>
+    var goods = "{{$goods}}";
     var url = "{{url('/home/index/index')}}";
     var detail_url = "{{url('/home/index/detail')}}";
 </script>

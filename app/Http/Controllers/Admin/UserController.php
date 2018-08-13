@@ -102,7 +102,7 @@ class UserController extends Controller
             $data['pic'] = $this->upload($request, 'pic');
         }
         $id = $request->input('id');
-        $res = User::select()->where('id', $id)->update($data);
+        $res = User::where('id', $id)->update($data);
         if ($res) {
             return redirect('/admin/user/index')->with('success', '用户修改成功');
         } else {
@@ -118,6 +118,9 @@ class UserController extends Controller
      */
     public function upload($request, $filename)
     {
+        if (!file_exists('./uploads')) {
+            mkdir('./uploads');
+        }
         if ($request->hasFile($filename)) {
             $suffix = $request->file($filename)->getClientOriginalExtension();
             $name = md5(time() . rand(1, 9999));

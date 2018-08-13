@@ -17,7 +17,12 @@
                     <td v-if="order.status == 1">已支付,待发货</td>
                     <td v-else-if="order.status == 2">已发货</td>
                     <td v-else>待支付</td>
-                    <td v-bind:onclick="jumping('/home/order/ping?id='+order.id)">评论</td>
+                    <td v-if="order.is_comment==1">已评论</td>
+                    <td v-else>
+                        <!--<a v-bind:href="/home/order/ping?id=">评论</a>-->
+                        <!--<a v-bind:href="url">...</a>-->
+                        <a v-on:click="jumping('/home/order/ping?id='+order.id)">评论</a>
+                    </td>
                 </tr>
             </table>
         </div>

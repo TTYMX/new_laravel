@@ -65,13 +65,13 @@ return [
         'qiniu' => [
             'driver'  => 'qiniu',
             'domains' => [
-                'default'   => 'xxxxx', //你的七牛域名
-                'https'     => 'xxxxx',         //你的HTTPS域名
-                'custom'    => 'xxxxx',     //你的自定义域名
+                'default'   => 'pddykebqm.bkt.clouddn.com',//你的七牛域名
+                'https'     => 'http://mengxianfan.training.hsh.lehuipay.com',//你的HTTPS域名
+                'custom'    => '',//你的自定义域名
             ],
-            'access_key'=> '',  //AccessKey
-            'secret_key'=> '',  //SecretKey
-            'bucket'    => '',  //Bucket名字
+            'access_key'=> 'toz1N3US2bdhHIRHOP7QtLxSz4XKHIPXbgtUr5Yx',//AccessKey
+            'secret_key'=> 'eMHIXEK7XG1IGIzg3HiChW5Lr9Zg67r_2_tP5CQV',//SecretKey
+            'bucket'    => 'xianfan', //Bucket名字
             'notify_url'=> '',  //持久化处理回调地址
         ],
 
